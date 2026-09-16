@@ -72,9 +72,12 @@ FILE* archivoDia = fopen(nomArchi, "ab");
           claveCorr=true;} else{
           claveCorr=false;}
       }
+        
+        
         if(claveCorr==true){
           break;}
       }
+      else{ cout<<"Id del mozo incorrecto"<<endl; break;}
     }
 //cierre archivo mozos
     fclose(archMozos);
@@ -91,13 +94,28 @@ FILE* archivoDia = fopen(nomArchi, "ab");
       return 1;
     }
       Producto UnProd;
+if(mozEnc==true && claveCorr==true){
+cout<<"--SESION INCIADA--"<<endl;
+  
+int codProdIng;
+int cantIng;
+  
+  cout<<"Ingrese el codigo del producto: (0 para finalizar el ingreso de ventas) ";
+  cin >> codProdIng;
+  
+  while(codProdIng!=0){
+    
+  cout<<"Ingrese la cantidad del producto: ";
+    cin >> cantIng; 
       //recorrido para buscar prod
       while (fread(&UnProd, sizeof(Producto), 1,ArchiInv) == 1){
-        
+        if(UnProd.codigo==codProdIng){
+          float comCalc = UnProd.precio * cantIng;
       
     
+      }
 
-
-
-return 0;
+      }
 }
+return 0;}
+
