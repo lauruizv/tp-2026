@@ -1,5 +1,28 @@
 #include <iostream>
 using namespace std;
+
+//Declaracion de structs
+struct Mozo{
+int idMozo;
+char nombre[50];
+char password[20];
+float totalComision;
+};
+
+struct Comanda{
+int idMozo;
+int codigoProducto;
+int cantidad;
+float comision;
+};
+
+struct Producto{
+int codigo;
+char descripcion[50];
+float precio;
+int stockActual;
+};
+
 int main(){
 
   char fechDia[11];
@@ -37,8 +60,42 @@ FILE* archivoDia = fopen(nomArchi, "ab");
     }
     bool mozEnc=false;
     bool clavCorr=false;
-    //recorrido con while fread 
+    Mozo unMozo;
+    //recorrido con while fread - verificacion de clave
+    while (fread(&unMozo, sizeof(Mozo), 1, archMozos) == 1){
 
+      if(IdMozo==unMozo.idMozo){
+        mozEnc=true;
+      
+      for(int i=0;i<3;i++){
+        if(claveIngresada[i]==unMozo.password[i]){
+          claveCorr=true;} else{
+          claveCorr=false;}
+      }
+        if(claveCorr==true){
+          break;}
+      }
+    }
+//cierre archivo mozos
+    fclose(archMozos);
+
+    if(!mozEnc){
+      cout<<"Numero de mozo no existente "<<endl;}
+    else if(!clavCorr){"La clave ingresada es incorrecta "<<endl;}
+      
+    else{
+      //apertura archivo inventario.dat
+      FILE* ArchiInv = fopen("inventario.dat", "rb+");
+    if(ArchiInv==NULL){
+      cout<<"Error, no se pudo abrir el archivo de mozos"<<endl;
+      return 1;
+    }
+      Producto UnProd;
+      //recorrido para buscar prod
+      while (fread(&UnProd, sizeof(Producto), 1,ArchiInv) == 1){
+        
+      
+    
 
 
 
