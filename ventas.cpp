@@ -112,9 +112,11 @@ int cantIng;
       while (fread(&UnProd, sizeof(Producto), 1,ArchiInv) == 1){
         if(UnProd.codigo==codProdIng){
           ProdEncontrado=true;
+          if(UnProd.stockActual>=cantIng){
           float comCalc = (UnProd.precio * cantIng) * 0.10 ;
-          UnProd.stockActual-1;
-          
+          UnProd.stockActual-cantIng; //FALTA AGREGAR FSEEK FWRITE para sacar stock y agregaf info a comandas
+          }
+          else {cout<<" --ERROR STOCK INSUFICIENTE-- "<<endl;}
       }
 
       }
