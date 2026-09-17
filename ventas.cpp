@@ -94,6 +94,7 @@ FILE* archivoDia = fopen(nomArchi, "ab");
       return 1;
     }
       Producto UnProd;
+      bool ProdEncontrado=false;
 if(mozEnc==true && claveCorr==true){
 cout<<"--SESION INCIADA--"<<endl;
   
@@ -110,9 +111,10 @@ int cantIng;
       //recorrido para buscar prod
       while (fread(&UnProd, sizeof(Producto), 1,ArchiInv) == 1){
         if(UnProd.codigo==codProdIng){
-          float comCalc = UnProd.precio * cantIng;
-      
-    
+          ProdEncontrado=true;
+          float comCalc = (UnProd.precio * cantIng) * 0.10 ;
+          UnProd.stockActual-1;
+          
       }
 
       }
