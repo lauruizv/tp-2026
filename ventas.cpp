@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstring>
 using namespace std;
 
 //Declaracion de structs
@@ -36,8 +37,8 @@ int main(){
     nomArchi[9+i]=fechaDia[i];
   }
 //Apertura archivo/crear en caso de no existir
-FILE* archivoDia = fopen(nomArchi, "ab");
-    if (archivoDia == NULL) {
+FILE* ArchiDia = fopen(nomArchi, "ab");
+    if (ArchiDia == NULL) {
         cout << "Error al crear/abrir el archivo." << endl;
         return 1;
     }
@@ -49,12 +50,12 @@ FILE* archivoDia = fopen(nomArchi, "ab");
     cout<<"Ingrese la clave del mozo: "; cin>>claveIngresada;
     //Aplicar corrimiento a la clave 
     const  int numCorrimiento=3;
-    for(int i=0;i<3;i++){
+    for(int i=0; claveIngresada[i]!='\0'; i++){
       claveIngresada[i]=claveIngresada[i]+numCorrimiento;
     }
     //Apertura de archivo mozos
-    FILE* archMozos = fopen("mozos.dat", "rb");
-    if(archMozos==NULL){
+    FILE* ArchiMozos = fopen("mozos.dat", "rb");
+    if(ArchiMozos==NULL){
       cout<<"Error, no se pudo abrir el archivo de mozos"<<endl;
       return 1;
     }
@@ -62,49 +63,49 @@ FILE* archivoDia = fopen(nomArchi, "ab");
     bool clavCorr=false;
     Mozo unMozo;
     //recorrido con while fread - verificacion de clave
-    while (fread(&unMozo, sizeof(Mozo), 1, archMozos) == 1){
+    while (fread(&unMozo, sizeof(Mozo), 1, ArchiMozos) == 1){
 
       if(IdMozo==unMozo.idMozo){
         mozEnc=true;
       
-      for(int i=0;i<3;i++){
-        if(claveIngresada[i]==unMozo.password[i]){
-          claveCorr=true;} else{
-          claveCorr=false;}
-      }
+      if (strcmp(claveIngresada, unMozo.password) == 0) {
+                    clavCorr = true;
+                }
         
-        
-        if(claveCorr==true){
-          break;}
+        break;
       }
-      else{ cout<<"Id del mozo incorrecto"<<endl; break;}
-    }
+      }
+      else{ cout<<"Id del mozo incorrecto"<<endl;
+      }
+    
 //cierre archivo mozos
-    fclose(archMozos);
+    fclose(ArchiMozos);
 
     if(!mozEnc){
       cout<<"Numero de mozo no existente "<<endl;}
-    else if(!clavCorr){"La clave ingresada es incorrecta "<<endl;}
+
+    else if(!clavCorr){cout<<"La clave ingresada es incorrecta "<<endl;}
       
     else{
       //apertura archivo inventario.dat
-      FILE* ArchiInv = fopen("inventario.dat", "rb+");
-    if(ArchiInv==NULL){
-      cout<<"Error, no se pudo abrir el archivo de mozos"<<endl;
-      return 1;
-    }
       Producto UnProd;
       bool ProdEncontrado=false;
-if(mozEnc==true && claveCorr==true){
 cout<<"--SESION INCIADA--"<<endl;
   
 int codProdIng;
 int cantIng;
+Comanda UnaComanda;
   
   cout<<"Ingrese el codigo del producto: (0 para finalizar el ingreso de ventas) ";
   cin >> codProdIng;
   
   while(codProdIng!=0){
+    
+    FILE* ArchiInv = fopen("inventario.dat", "rb+");
+    if(ArchiInv==NULL){
+      cout<<"Error, no se pudo abrir el archivo de mozos"<<endl;
+      return 1;
+    }
     
   cout<<"Ingrese la cantidad del producto: ";
     cin >> cantIng; 
@@ -113,13 +114,33 @@ int cantIng;
         if(UnProd.codigo==codProdIng){
           ProdEncontrado=true;
           if(UnProd.stockActual>=cantIng){
-          float comCalc = (UnProd.precio * cantIng) * 0.10 ;
-          UnProd.stockActual-cantIng; //FALTA AGREGAR FSEEK FWRITE para sacar stock y agregaf info a comandas
+            
+          UnaComanda.idMozo = IdMozo;
+          UnaComanda.codigoProducto = codProdIng;
+          UnaComanda.cantidad = cantIng;
+          UnaComanda.comision = (UnProd.precio * cantIng) * 0.10;
+             
+          fwrite(&UnaComanda, sizeof(Comanda), 1, ArchiDia);
+
+            UnProd.stockActual-=cantIng; 
+
+          fseek(ArchiInv, -sizeof(Producto), SEEK_CUR);
+            
+          fwrite(&UnProd, sizeof(Producto), 1, ArchiInv);
+
+          break;
           }
           else {cout<<" --ERROR STOCK INSUFICIENTE-- "<<endl;}
       }
 
-      }
+      fclose(ArchiInv); }
+   
+cout << "Ingrese otro codigo de producto (0 para finalizar ventas del mozo): ";
+    cin >> codProdIngresado;
+  }
+  cout<<" --SESION CERRADA-- "<<endl;
 }
+      cout<<"Ingrese el ID del mozo: (Ingrese 0 para terminar el dia) "; cin>>IdMozo;
+    }
 return 0;}
 
