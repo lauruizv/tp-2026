@@ -26,14 +26,14 @@ int stockActual;
 
 int main(){
 
-  char fechDia[11];
+  char fechaDia[11];
   char nomArchi[50]="comandas_XXXXXXXXXX.dat";
   
 
-  cout<<" Ingrese la fecha de hoy (DD-MM-AAAA): "; cin>>fechDia;
+  cout<<" Ingrese la fecha de hoy (DD-MM-AAAA): "; cin>>fechaDia;
 
 //condicion para cargar el nombre del archivo y asegurarse de no meter un caracter nulo de la fecha al nombre del archivo
-  for(int i=0;i<10 && fechDia[i]!='\0';i++){
+  for(int i=0;i<10 && fechaDia[i]!='\0';i++){
     nomArchi[9+i]=fechaDia[i];
   }
 //Apertura archivo/crear en caso de no existir
@@ -75,9 +75,7 @@ FILE* ArchiDia = fopen(nomArchi, "ab");
         break;
       }
       }
-      else{ cout<<"Id del mozo incorrecto"<<endl;
-      }
-    
+     
 //cierre archivo mozos
     fclose(ArchiMozos);
 
@@ -89,7 +87,7 @@ FILE* ArchiDia = fopen(nomArchi, "ab");
     else{
       //apertura archivo inventario.dat
       Producto UnProd;
-      bool ProdEncontrado=false;
+      
 cout<<"--SESION INCIADA--"<<endl;
   
 int codProdIng;
@@ -100,11 +98,11 @@ Comanda UnaComanda;
   cin >> codProdIng;
   
   while(codProdIng!=0){
-    
+    bool ProdEncontrado=false;
     FILE* ArchiInv = fopen("inventario.dat", "rb+");
     if(ArchiInv==NULL){
-      cout<<"Error, no se pudo abrir el archivo de mozos"<<endl;
-      return 1;
+      cout<<"Error, no se pudo abrir el archivo de inventario"<<endl;
+      break;
     }
     
   cout<<"Ingrese la cantidad del producto: ";
@@ -132,15 +130,52 @@ Comanda UnaComanda;
           }
           else {cout<<" --ERROR STOCK INSUFICIENTE-- "<<endl;}
       }
+      }
 
-      fclose(ArchiInv); }
-   
-cout << "Ingrese otro codigo de producto (0 para finalizar ventas del mozo): ";
-    cin >> codProdIngresado;
+     fclose(ArchiInv);
+
+        if(!ProdEncontrado){
+          cout<<"ERROR, PRODUCTO INEXISTENTE"<<endl;
+      }
+        cout<<"Ingrese otro codigo de producto (0 para finalizar el ingreso de ventas)";
+          cin>>codProdIng;
   }
   cout<<" --SESION CERRADA-- "<<endl;
 }
       cout<<"Ingrese el ID del mozo: (Ingrese 0 para terminar el dia) "; cin>>IdMozo;
     }
+  fclose(ArchiDia);
+
+  //Pasamos los datos de la comanda del dia a un array de struct para ordenarlos y volverlos a meter al archivo de comanda dia
+  Comanda VecComDia[500];
+  int cantVentas=0;
+  ArchiDia = fopen(nomArchi, "rb");
+  if(ArchiDia==NULL){
+    cout<<"ERROR, el archivo nose pudo abrir"<<endl; 
+    return 1;
+  }
+  while (fread(&VecComDia[cantVentas], sizeof(Comanda), 1, ArchiDia) == 1) {
+        cantVentas++; 
+    }
+  fclose(ArchiDia);
+  //VEC de struct ya copiado
+  //ORDENAR por IdMozo
+for(int i=0;i<cantVentas-1;i++){
+  int posMenor=i;
+  for(int j=i+1;j<cantVentas;j++){
+    if(VecComDia[j].idMozo<VecComDia[posMenor].idMozo){
+      posMenor=j;}
+  }
+  if (posMenor != i) {
+        Comanda aux = VecComDia[i];
+        VecComDia[i] = VecComDia[posMenor];
+        VecComDia[posMenor] = aux;
+    }
+}
+  //CARGAR VEC DE STRUCTS ORDENADO EN ARCHIVO COMANDAS DIA
+  ArchiDia = fopen(nomArchi, "wb");
+  fwrite(VecComDia, sizeof(Comanda), cantVentas, ArchiDia);
+  fclose(ArchiDia);
+  
 return 0;}
 
