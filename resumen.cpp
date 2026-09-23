@@ -1,5 +1,7 @@
 #include <iostream>
+#include <cstdio>
 using namespace std;
+void CorteControl(FILE*, archSemana);
 int main(){
   
 struct Comanda{
@@ -8,28 +10,33 @@ int codigoProducto;
 int cantidad;
 float comision;
 };
-  
-int TotProd=0;
-int ProdXmozo=0;
-float ComiXmozo=0;
+char seguir;
+do {
+char NomArchi[50] = "comandas_semana_sX-mm.dat";
+char sem;
+char mes[3];
 
-FILE* ArchiComSem = fopen(NomArchiComSem, "rb");
+cout<<"--RESUMEN SEMANAL--"<<endl;
+cout<<"Ingrese el numero de semana (1, 2, 3, 4): "; cin>>sem;
+cout<<"Ingrese el mes (01 - 12): "; cin>>mes;
+
+NomArchi[17] = sem;
+NomArchi[19] = mes[0];
+NomArchi[20] = mes[1];
+
+
+FILE* ArchSemana = fopen(NomArchi, "rb");
 if(ArchiComSem==NULL){
 
-  cout<<"ERROR, no se pudo abrir el archivo "<<endl;
+  cout<<"ERROR, no se pudo abrir el archivo "<<NomArchi<<endl;
+  cout<<"Verifique que la semana ya fue procesada por el programa de cierre " <endl;
+}
+else{
+//funciion y fclose de NomArchi
+
 }
 
-  Comanda ComSemanal;
-  
-while(fread(&ComSemanal, sizeof(Comanda), 1, ArchiComSem) ==1){
-  bool MismoMozo=true;
-  
-  if(MismoMozo==true){
-    ProdXmozo+=ComSemana.cantidad;
-    ComiXmozo+=ComSemana.comision;
-  }
-
-
+} while (//cond seguir
 
 
 
