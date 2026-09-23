@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstring>
+#include <cstdio>
 using namespace std;
 
 //Declaracion de structs
