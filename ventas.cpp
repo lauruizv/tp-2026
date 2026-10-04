@@ -123,7 +123,7 @@ Comanda UnaComanda;
 
             UnProd.stockActual-=cantIng; 
 
-          fseek(ArchiInv, -sizeof(Producto), SEEK_CUR);
+          fseek(ArchiInv, -(long)sizeof(Producto), SEEK_CUR);
             
           fwrite(&UnProd, sizeof(Producto), 1, ArchiInv);
 
@@ -155,7 +155,7 @@ Comanda UnaComanda;
     cout<<"ERROR, el archivo nose pudo abrir"<<endl; 
     return 1;
   }
-  while (fread(&VecComDia[cantVentas], sizeof(Comanda), 1, ArchiDia) == 1) {
+  while (cantVentas<500 && fread(&VecComDia[cantVentas], sizeof(Comanda), 1, ArchiDia) == 1) {
         cantVentas++; 
     }
   fclose(ArchiDia);
