@@ -28,14 +28,14 @@ int stockActual;
 int main(){
 
   char fechaDia[11];
-  char nomArchi[50]="comandas_XXXXXXXXXX.dat";
+  char nomArchi[50]="datos/comandas_XXXXXXXXXX.dat";
   
 
   cout<<" Ingrese la fecha de hoy (DD-MM-AAAA): "; cin>>fechaDia;
 
 //condicion para cargar el nombre del archivo y asegurarse de no meter un caracter nulo de la fecha al nombre del archivo
   for(int i=0;i<10 && fechaDia[i]!='\0';i++){
-    nomArchi[9+i]=fechaDia[i];
+    nomArchi[15+i]=fechaDia[i];
   }
 //Apertura archivo/crear en caso de no existir
 FILE* ArchiDia = fopen(nomArchi, "ab");
@@ -55,7 +55,7 @@ FILE* ArchiDia = fopen(nomArchi, "ab");
       claveIngresada[i]=claveIngresada[i]+numCorrimiento;
     }
     //Apertura de archivo mozos
-    FILE* ArchiMozos = fopen("mozos.dat", "rb");
+    FILE* ArchiMozos = fopen("datos/mozos.dat", "rb");
     if(ArchiMozos==NULL){
       cout<<"Error, no se pudo abrir el archivo de mozos"<<endl;
       return 1;
@@ -100,7 +100,7 @@ Comanda UnaComanda;
   
   while(codProdIng!=0){
     bool ProdEncontrado=false;
-    FILE* ArchiInv = fopen("inventario.dat", "rb+");
+    FILE* ArchiInv = fopen("datos/inventario.dat", "rb+");
     if(ArchiInv==NULL){
       cout<<"Error, no se pudo abrir el archivo de inventario"<<endl;
       break;
