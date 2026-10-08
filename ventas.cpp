@@ -147,35 +147,36 @@ Comanda UnaComanda;
     }
   fclose(ArchiDia);
 
-  //Pasamos los datos de la comanda del dia a un array de struct para ordenarlos y volverlos a meter al archivo de comanda dia
-  Comanda VecComDia[500];
-  int cantVentas=0;
-  ArchiDia = fopen(nomArchi, "rb");
-  if(ArchiDia==NULL){
-    cout<<"ERROR, el archivo nose pudo abrir"<<endl; 
+  // ORDENAMIENTO DIRECTO EN ARCHIVO 
+  ArchiDia = fopen(nomArchi, "rb+"); 
+  
+  if(ArchiDia == NULL){
+    cout << "ERROR, el archivo no se pudo abrir para ordenar" << endl; 
     return 1;
   }
-  while (cantVentas<500 && fread(&VecComDia[cantVentas], sizeof(Comanda), 1, ArchiDia) == 1) {
-        cantVentas++; 
-    }
-  fclose(ArchiDia);
-  //VEC de struct ya copiado
-  //ORDENAR por IdMozo
-for(int i=0;i<cantVentas-1;i++){
-  int posMenor=i;
-  for(int j=i+1;j<cantVentas;j++){
-    if(VecComDia[j].idMozo<VecComDia[posMenor].idMozo){
-      posMenor=j;}
+
+  // calculamos la cantidad total de registros en el archivo fisicamente
+  fseek(ArchiDia, 0, SEEK_END); 
+  long TotBytes = ftell(ArchiDia); 
+  int TotVent = TotBytes / sizeof(Comanda); 
+
+  // ordenamiento burbuja leyendo y escribiendo en archivo
+  for(int i = 0; i < TotVent - 1; i++){
+      for(int j = 0; j < TotVent - 1 - i; j++){
+          
+          Comanda c1 , c2;
+          
+          fseek(ArchiDia, j * sizeof(Comanda), SEEK_SET);
+          fread(&c1, sizeof(Comanda), 1, ArchiDia);
+          fread(&c2, sizeof(Comanda), 1, ArchiDia);
+          
+          if(c1.idMozo > c2.idMozo){
+              fseek(ArchiDia, j * sizeof(Comanda), SEEK_SET);
+              fwrite(&c2, sizeof(Comanda), 1, ArchiDia);
+              fwrite(&c1, sizeof(Comanda), 1, ArchiDia);
+          }
+      }
   }
-  if (posMenor != i) {
-        Comanda aux = VecComDia[i];
-        VecComDia[i] = VecComDia[posMenor];
-        VecComDia[posMenor] = aux;
-    }
-}
-  //CARGAR VEC DE STRUCTS ORDENADO EN ARCHIVO COMANDAS DIA
-  ArchiDia = fopen(nomArchi, "wb");
-  fwrite(VecComDia, sizeof(Comanda), cantVentas, ArchiDia);
   fclose(ArchiDia);
   
 return 0;}
