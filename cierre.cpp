@@ -16,18 +16,17 @@ struct Comanda {
 };
 
 //Constantes-----------------------
-const int MAX_COMANDAS = 100;
-
 const int diasMes[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 //Prototipos de Funcion
 void mostrarComandas(const char* nombre);
-void ordenarComandas(Comanda vec[], int len);
-void obtenerComandas(const char* nombreArchivo, Comanda comandas[], int& cantidadComandas);
 
 bool esFinDeSemana(char fechaHoy[]);
+void armarSemana(char* cadena, const char* fecha);
 void calcularDias(char fechaHoy[], char nombresArchivos[7][30], int& cantidadArchivos);
 void armarComanda(char fecha[], char comanda[]);
+
+void apareo(const char* nomA, const char* nomB, const char* nomC);
 
 int main(int argc, char** argv) {
 	
@@ -68,17 +67,46 @@ int main(int argc, char** argv) {
 	    calcularDias(fechaHoy, nombresArchivos, cantidadArchivos);
 	    
 	    //JUNTAR PLANILLAS... 
-	    Comanda comandas[MAX_COMANDAS];
-	    int cantComandas = 0;
+	    
+		char archivoSemanal[32] = "datos/comandas_semana_s";
+	    armarSemana(archivoSemanal, fechaHoy);
+	    
+		/*
+			A + B ? temporal1
+			temporal1 + C ? temporal2
+			temporal2 + D ? temporal1
+			temporal1 + E ? temporal2
+		*/
 		
-		for (int i = cantidadArchivos-1; i >= 0; i--){
-		    obtenerComandas(nombresArchivos[i], comandas, cantComandas);
+		char temporal1[20] = "datos/temporal1.dat";
+		char temporal2[20] = "datos/temporal2.dat";
+		
+		apareo(nombresArchivos[0], nombresArchivos[1], temporal1);
+		
+		char resultado[20];
+		strcpy(resultado, temporal1);
+		
+		for (int i = 2; i < cantidadArchivos; i++)
+		{
+		    if (i % 2 == 0)
+		    {
+		        remove(temporal2);
+		        apareo(temporal1, nombresArchivos[i], temporal2);
+		        strcpy(resultado, temporal2);
+		    }
+		    else
+		    {
+		        remove(temporal1);
+		        apareo(temporal2, nombresArchivos[i], temporal1);
+		        strcpy(resultado, temporal1);
+		    }
 		}
 		
-		ordenarComandas(comandas, cantComandas);
+		rename(resultado, archivoSemanal);
 		
-		//GRABAR datos/comandas_semana_sX-mm.dat
+		cout << "Archivo Creado: " << archivoSemanal << endl;
 		
+	    //mostrarComandas(archivoSemanal);
 	    
 	    cout << "\n\n---------------CIERRE---------------" << endl;
 	    
@@ -86,33 +114,36 @@ int main(int argc, char** argv) {
 	return 0;
 }
 
-//COMANDAS: Recorrer
-void obtenerComandas(const char* nombre, Comanda arr[], int& len){
+// APAREO
+void apareo(const char* nomA, const char* nomB, const char* nomC) {
 	
-	FILE* archivoComandas = fopen(nombre, "rb");
-	if (archivoComandas == NULL) return;
+	FILE* a = fopen(nomA, "rb");
+	FILE* b = fopen(nomB, "rb");
+	FILE* c = fopen(nomC, "wb");
 	
-	Comanda r;
+	Comanda ra, rb;
 	
-	while (fread(&r, sizeof(Comanda), 1, archivoComandas) == 1) {
-		arr[len] = r;
-		len++;
-	}
-	fclose(archivoComandas);
-}
-
-//COMANDAS: Ordenamiento por Insercion
-void ordenarComandas(Comanda vec[], int len) {
-	for (int i = 1; i < len; i++) {
-		Comanda clave = vec[i];	// elemento a insertar en la parte ordenada
-		int j = i - 1;
-		// Desplazar a la derecha todos los elementos mayores que clave
-		while (j >= 0 && vec[j].idMozo > clave.idMozo) {
-			vec[j + 1] = vec[j];
-			j--;
+	int la = fread(&ra, sizeof(Comanda), 1, a);
+	int lb = fread(&rb, sizeof(Comanda), 1, b);
+	
+	while (la == 1 && lb == 1) { // mientras haya en AMBOS
+		if (ra.idMozo < rb.idMozo) {
+			fwrite(&ra, sizeof(Comanda), 1, c);
+			la = fread(&ra, sizeof(Comanda), 1, a); // avanzo A
+		} else {
+			fwrite(&rb, sizeof(Comanda), 1, c);
+			lb = fread(&rb, sizeof(Comanda), 1, b); // avanzo B
 		}
-		vec[j + 1] = clave; // insertar clave en su posición correcta
 	}
+	while (la == 1) { // agoto A (si fue el que sobró)
+		fwrite(&ra, sizeof(Comanda), 1, c);
+		la = fread(&ra, sizeof(Comanda), 1, a);
+	}
+	while (lb == 1) { // agoto B
+		fwrite(&rb, sizeof(Comanda), 1, c);
+		lb = fread(&rb, sizeof(Comanda), 1, b);
+	}
+	fclose(a); fclose(b); fclose(c);
 }
 
 //----------FUNCIONES AUXILIARES----------
@@ -123,6 +154,32 @@ void armarComanda(char fecha[], char comanda[]){
 	strcpy(comanda, "datos/comandas_");
 	strcat(comanda, fecha);
 	strcat(comanda, ".dat");
+}
+
+//Desarrollo de Funcion armarSemana()...
+void armarSemana(char* cadena, const char* fecha){
+	
+	char semana;
+	
+	int i = 0;
+	while(cadena[i] != '\0'){
+		i++;
+	}
+	
+	int dia = (fecha[0] - '0') * 10 + (fecha[1] - '0');
+
+    if (dia >= 1 && dia <= 7) semana =  '1';
+    else if (dia <= 14) semana = '2';
+    else if (dia <= 21) semana = '3';
+    else if (dia <= 28) semana = '4';
+    else semana = '5';
+	
+	cadena[i] = semana;
+	cadena[i + 1] = '\0';
+	
+	strcat(cadena, "-");
+	strncat(cadena, fecha + 3, 2);
+	strcat(cadena, ".dat");
 }
 
 //Desarrollo de Funcion esFinDeSemana()...
