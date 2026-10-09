@@ -26,6 +26,7 @@ void armarSemana(char* cadena, const char* fecha);
 void calcularDias(char fechaHoy[], char nombresArchivos[7][30], int& cantidadArchivos);
 void armarComanda(char fecha[], char comanda[]);
 
+void copiarArchivo(const char* origen, const char* destino);
 void apareo(const char* nomA, const char* nomB, const char* nomC);
 
 int main(int argc, char** argv) {
@@ -81,30 +82,40 @@ int main(int argc, char** argv) {
 		char temporal1[20] = "datos/temporal1.dat";
 		char temporal2[20] = "datos/temporal2.dat";
 		
-		apareo(nombresArchivos[0], nombresArchivos[1], temporal1);
+		remove(archivoSemanal);
+		if (cantidadArchivos == 1){
+			//	Si solo existe la planilla cierre
+			copiarArchivo(nombresArchivos[0], archivoSemanal);
+		}
+		else{
+			// Varios Archivos
+			apareo(nombresArchivos[0], nombresArchivos[1], temporal1);
 		
-		char resultado[20];
-		strcpy(resultado, temporal1);
-		
-		for (int i = 2; i < cantidadArchivos; i++)
-		{
-		    if (i % 2 == 0)
-		    {
-		        remove(temporal2);
-		        apareo(temporal1, nombresArchivos[i], temporal2);
-		        strcpy(resultado, temporal2);
-		    }
-		    else
-		    {
-		        remove(temporal1);
-		        apareo(temporal2, nombresArchivos[i], temporal1);
-		        strcpy(resultado, temporal1);
-		    }
+			char resultado[20];
+			strcpy(resultado, temporal1);
+			
+			for (int i = 2; i < cantidadArchivos; i++)
+			{
+			    if (i % 2 == 0)
+			    {
+			        remove(temporal2);
+			        apareo(temporal1, nombresArchivos[i], temporal2);
+			        strcpy(resultado, temporal2);
+			    }
+			    else
+			    {
+			        remove(temporal1);
+			        apareo(temporal2, nombresArchivos[i], temporal1);
+			        strcpy(resultado, temporal1);
+			    }
+			}
+			
+			rename(resultado, archivoSemanal);	
 		}
 		
-		rename(resultado, archivoSemanal);
-		
-		cout << "Archivo Creado: " << archivoSemanal << endl;
+		remove(temporal1);
+		remove(temporal2);
+		cout << "\nArchivo Creado: " << archivoSemanal << "\n" << endl;
 		
 	    //mostrarComandas(archivoSemanal);
 	    
@@ -146,6 +157,32 @@ void apareo(const char* nomA, const char* nomB, const char* nomC) {
 	fclose(a); fclose(b); fclose(c);
 }
 
+//COPIAR ARCHIVO: Recorrer
+void copiarArchivo(const char* origen, const char* destino) {
+    FILE* a = fopen(origen, "rb");
+
+    if (a == NULL) {
+        cout << "Error al abrir el archivo de origen." << endl;
+        return;
+    }
+
+    FILE* b = fopen(destino, "wb");
+
+    if (b == NULL) {
+        cout << "Error al crear el archivo de destino." << endl;
+        fclose(a);
+        return;
+    }
+
+    Comanda r;
+
+    while (fread(&r, sizeof(Comanda), 1, a) == 1) {
+        fwrite(&r, sizeof(Comanda), 1, b);
+    }
+
+    fclose(a);
+    fclose(b);
+}
 //----------FUNCIONES AUXILIARES----------
 
 //Desarrollo de Funcion armarComanda()...
@@ -209,43 +246,35 @@ void calcularDias(char fechaHoy[], char nombresArchivos[7][30], int& cantidadArc
              + (fechaHoy[8] - '0') * 10
              + (fechaHoy[9] - '0');
 
-    for (int i = 0; i < 6; i++)
-    {
-        dia--;
+    int diasABuscar = 6;
 
-        if (dia == 0)
-        {
-            mes--;
+	if (dia > 28) {
+	    diasABuscar = diasMes[mes - 1] - 29;
+	}
+	
+	for (int i = 0; i < diasABuscar; i++) {
+    	
+		dia--;
+	    char fechaAnterior[11];
 
-            if (mes == 0)
-            {
-                mes = 12;
-                anio--;
-            }
+	    fechaAnterior[0] = dia / 10 + '0';
+	    fechaAnterior[1] = dia % 10 + '0';
+	    fechaAnterior[2] = '-';
 
-            dia = diasMes[mes - 1];
-        }
+	    fechaAnterior[3] = mes / 10 + '0';
+	    fechaAnterior[4] = mes % 10 + '0';
+	    fechaAnterior[5] = '-';
 
-        char fechaAnterior[11];
+	    fechaAnterior[6] = anio / 1000 + '0';
+	    fechaAnterior[7] = (anio / 100) % 10 + '0';
+	    fechaAnterior[8] = (anio / 10) % 10 + '0';
+	    fechaAnterior[9] = anio % 10 + '0';
+	
+	    fechaAnterior[10] = '\0';
 
-        fechaAnterior[0] = dia / 10 + '0';
-        fechaAnterior[1] = dia % 10 + '0';
-        fechaAnterior[2] = '-';
+	    char comandaBuscada[30];
 
-        fechaAnterior[3] = mes / 10 + '0';
-        fechaAnterior[4] = mes % 10 + '0';
-        fechaAnterior[5] = '-';
-
-        fechaAnterior[6] = anio / 1000 + '0';
-        fechaAnterior[7] = (anio / 100) % 10 + '0';
-        fechaAnterior[8] = (anio / 10) % 10 + '0';
-        fechaAnterior[9] = anio % 10 + '0';
-
-        fechaAnterior[10] = '\0';
-
-        char comandaBuscada[30];
-
-        armarComanda(fechaAnterior, comandaBuscada);
+	    armarComanda(fechaAnterior, comandaBuscada);
 
         FILE* archivo = fopen(comandaBuscada, "rb");
 
@@ -257,7 +286,7 @@ void calcularDias(char fechaHoy[], char nombresArchivos[7][30], int& cantidadArc
 
             fclose(archivo);
         }
-    }
+	}	
 }
 
 //PRUEBAS----------------------------------------------------------------------
@@ -267,7 +296,7 @@ void mostrarComandas(const char* nombre){
 	if (archivoComandas == NULL) return;
 	Comanda r;
 	while (fread(&r, sizeof(Comanda), 1, archivoComandas) == 1) {
-		cout << r.idMozo << " - " << r.codigoProducto << " - " << r.cantidad << " - " << r.comision << endl;
+		cout << "\t" << r.idMozo << " - " << r.codigoProducto << " - " << r.cantidad << " - " << r.comision << endl;
 	}
 	fclose(archivoComandas);
 }
