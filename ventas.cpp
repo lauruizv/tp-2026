@@ -47,14 +47,7 @@ FILE* ArchiDia = fopen(nomArchi, "ab");
   int IdMozo;
   cout<<"Ingrese el ID del mozo: (Ingrese 0 para terminar el dia) "; cin>>IdMozo;
   while(IdMozo!=0){
-    char claveIngresada[20];
-    cout<<"Ingrese la clave del mozo: "; cin>>claveIngresada;
-    //Aplicar corrimiento a la clave 
-    const  int numCorrimiento=3;
-    for(int i=0; claveIngresada[i]!='\0'; i++){
-      claveIngresada[i]=claveIngresada[i]+numCorrimiento;
-    }
-    //Apertura de archivo mozos
+   //Apertura de archivo mozos
     FILE* ArchiMozos = fopen("datos/mozos.dat", "rb");
     if(ArchiMozos==NULL){
       cout<<"Error, no se pudo abrir el archivo de mozos"<<endl;
@@ -63,22 +56,30 @@ FILE* ArchiDia = fopen(nomArchi, "ab");
     bool mozEnc=false;
     bool clavCorr=false;
     Mozo unMozo;
-    //recorrido con while fread - verificacion de clave
+    //recorrido con while fread - busqueda del mozo SOLO por ID
     while (fread(&unMozo, sizeof(Mozo), 1, ArchiMozos) == 1){
-
       if(IdMozo==unMozo.idMozo){
         mozEnc=true;
-      
-      if (strcmp(claveIngresada, unMozo.password) == 0) {
-                    clavCorr = true;
-                }
-        
-        break;
+        break; //unMozo queda con los datos del mozo encontrado
       }
-      }
-     
+    }
 //cierre archivo mozos
     fclose(ArchiMozos);
+
+    //recien si el mozo existe se pide la clave
+    if(mozEnc){
+      char claveIngresada[20];
+      cout<<"Ingrese la clave del mozo: "; cin>>claveIngresada;
+      //Aplicar corrimiento a la clave
+      const  int numCorrimiento=3;
+      for(int i=0; claveIngresada[i]!='\0'; i++){
+        claveIngresada[i]=claveIngresada[i]+numCorrimiento;
+      }
+      //se compara con la clave guardada del mozo encontrado
+      if (strcmp(claveIngresada, unMozo.password) == 0) {
+        clavCorr = true;
+      }
+    }
 
     if(!mozEnc){
       cout<<"Numero de mozo no existente "<<endl;}
@@ -108,6 +109,11 @@ Comanda UnaComanda;
     
   cout<<"Ingrese la cantidad del producto: ";
     cin >> cantIng; 
+    while(cantIng<=0){
+      cout<<"ERROR, la cantidad debe ser mayor a 0 "<<endl;
+      cout<<"Ingrese la cantidad del producto nuevamente: "; cin>>cantIng;
+    }
+    
       //recorrido para buscar prod
       while (fread(&UnProd, sizeof(Producto), 1,ArchiInv) == 1){
         if(UnProd.codigo==codProdIng){
