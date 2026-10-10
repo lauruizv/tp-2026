@@ -48,7 +48,8 @@ const char inventario[] = "datos/inventario.dat";
 const char comandasHistoricas[] = "datos/comandas_historicas.dat";
 
 const int NUM_CORRIMIENTO = 3;
-const int MAX_MOZOS = 1000;
+const int MAX_MOZOS = 30;
+const int MAX_COMANDAS = 50;	//Maximo de comandas a normalizar
 
 //-----------------------------|
 //Prototipos de Funcion
@@ -69,7 +70,7 @@ void insertarComandaOrdenada(ComandaAux vec[], int &len, ComandaAux valor);
 void insertarComanda(ComandaAux vec[], int &len, ComandaAux valor, int pos);
 void obtenerComandas(const char* nombre, ComandaAux comandas[], Mozo mozos[], int lenMozos, int& lenComandas);
 void generarArchivosComandas(ComandaAux comandas[], int cantComandas);
-int contarComandasHistoricas(const char* nombre);
+
 
 
 int main(int argc, char** argv){
@@ -81,18 +82,12 @@ int main(int argc, char** argv){
 	
 	crearArchivo("datos/mozos.dat", mozos, cantMozos);
 	
-	//Cuento las comandas del historico y creo el array con ese tamaño exacto
-        int totalHistoricas = contarComandasHistoricas(comandasHistoricas);
-        ComandaAux* comandas = new ComandaAux[totalHistoricas];
+	ComandaAux comandas[MAX_COMANDAS];
     int cantComandas = 0;
     obtenerComandas(comandasHistoricas, comandas, mozos, cantMozos, cantComandas);
-
+    
     //Crear archivos comandas_dd-mm-aaaa.dat y Actualizar inventario
-        if (cantComandas > 0) {
-                generarArchivosComandas(comandas, cantComandas);
-        }
-
-        delete[] comandas;      //Libero la memoria del array
+	generarArchivosComandas(comandas, cantComandas);
 	
 	cout << "\n\n-------------NORMALIZADO-------------" << endl;
 	
@@ -147,16 +142,6 @@ void actualizarStock(const char* nombre, int claveBuscada, int cantidad) {
 
 //------------COMANDAS AUXILIARES-----------------------
 /*{ char fecha[11]; int idMozo; int codigoProducto; int cantidad; float comision; };*/
-
-//Cuenta cuantas comandas tiene el archivo: tamaño total en bytes / tamaño de un registro
-int contarComandasHistoricas(const char* nombre) {
-        FILE* f = fopen(nombre, "rb");
-        if (f == NULL) return 0;
-        fseek(f, 0, SEEK_END);
-        long totalBytes = ftell(f);
-        fclose(f);
-        return totalBytes / sizeof(ComandaHistorica);
-}
 
 void generarArchivosComandas(ComandaAux comandas[], int cantComandas){
 	char fechaAnterior[11];
