@@ -46,27 +46,28 @@ int main(int argc, char** argv) {
 	
 	armarComanda(fechaHoy, comandaBuscada);
 	
-	FILE* archivo = fopen(comandaBuscada, "rb");
-	
-	if (archivo == NULL)
-	{
-	    cout << "No se encontro el archivo. No se puede cerrar la semana." << endl;
-	    cout << "Archivo buscado: " << comandaBuscada << endl;
-	}
-	else
-	{
-	    fclose(archivo);
-	    
-	    char nombresArchivos[7][30];
-	    int cantidadArchivos = 0;
-	    
-	    // Guardar el nombre del archivo de hoy
-	    strcpy(nombresArchivos[cantidadArchivos], comandaBuscada);
-	    cantidadArchivos++;
-	    
-	    // Buscar los MAX_DIAS anteriores. Los guarda en nombresArchivos[][]
-	    calcularDias(fechaHoy, nombresArchivos, cantidadArchivos);
-	    
+	char nombresArchivos[7][30];
+        int cantidadArchivos = 0;
+
+        // Si existe la planilla de hoy la guardo (si no existe, la omito como a los demas dias)
+        FILE* archivo = fopen(comandaBuscada, "rb");
+        if (archivo != NULL)
+        {
+            fclose(archivo);
+            strcpy(nombresArchivos[cantidadArchivos], comandaBuscada);
+            cantidadArchivos++;
+        }
+
+        // Buscar los MAX_DIAS anteriores. Los guarda en nombresArchivos[][]
+        calcularDias(fechaHoy, nombresArchivos, cantidadArchivos);
+
+        if (cantidadArchivos == 0)
+        {
+            cout << "No hay ninguna planilla diaria de esa semana. No se puede cerrar." << endl;
+        }
+        else
+        {
+			
 	    //JUNTAR PLANILLAS... 
 	    
 		char archivoSemanal[32] = "datos/comandas_semana_s";
