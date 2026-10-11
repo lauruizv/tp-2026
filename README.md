@@ -19,6 +19,7 @@ Grupo Numero 6: Laureano Ruiz github: lauruizv. | Mariano Delgado github: Marian
 
 ​-Ordenamiento directo en disco: se implementa un algoritmo de burbuja operando directamente sobre la memoria física del archivo generado (mediante fseek, fread y fwrite). Esto agrupa las comandas por identificador de mozo sin depender de arreglos estáticos, respetando la consigna de no limitar el uso de memoria RAM.
 ​
+
 3. Cierre:  Delgado, Mariano (Marian4d). Permite cerrar la semana siempre que exista la planilla del día ingresado como cierre de semana. Se espera que se ejecute al final de la semana, tras muchas ejecuciones de   ventas.cpp. De todas formas, la reitirada ejecucion de cierre (que no es lo ideal), Actualiza el archivo semanal sin dejar ducplicados.
    Partes Clave:
  
