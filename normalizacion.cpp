@@ -57,6 +57,7 @@ template <typename T>
 void crearArchivo(const char* nombre, T arr[], int len);
 
 void verInventario();
+long buscarProductoBin(const char* nombre, int clave, Producto& r);
 void actualizarStock(const char* nombre, int claveBuscada, int cantidad);
 
 void mostrarMozos();
@@ -114,28 +115,52 @@ void crearArchivo(const char* nombre, T arr[], int len) {
 }
 
 /*---------------------------------------------------------------------------------*/
+// INVENTARIO: Busqueda Binaria
+long buscarProductoBin(const char* nombre, int clave, Producto& r) {
+	FILE* f = fopen(nombre, "rb");
+	if (f == NULL) return -1;
+	fseek(f, 0, SEEK_END);
+	long n = ftell(f) / sizeof(Producto); // cantidad de registros
+	long pri = 0, ult = n - 1, pos = -1;
+	while (pri <= ult && pos == -1) {
+		long med = (pri + ult) / 2;
+		fseek(f, med * sizeof(Producto), SEEK_SET);
+		fread(&r, sizeof(Producto), 1, f);
+		if (r.codigo == clave) pos = med;
+		else if (clave > r.codigo) pri = med + 1;
+		else ult = med - 1;
+	}
+	fclose(f);
+	return pos;
+}
+
 
 //INVENTARIO - Editar Registro in situ-----------------------------------------
 //Descuenta en 'cantidad' el stock de un registro y lo sobreescribe
 void actualizarStock(const char* nombre, int claveBuscada, int cantidad) {
+
+	Producto p;
+	long productoEncontrado = buscarProductoBin(nombre, claveBuscada, p);
+
+	if (productoEncontrado == -1){
+		cout << "No se encontro el Producto." << endl;
+		return;
+	}
+	
 	FILE* f = fopen(nombre, "rb+");
 	if (f == NULL) return;
-	Producto p;
-	bool encontrado = false;
-	while (!encontrado && fread(&p, sizeof(Producto), 1, f) == 1) {
-		if (p.codigo == claveBuscada) {
-			encontrado = true;
-			p.stockActual -= cantidad;
-			if (p.stockActual < 0){
-				p.stockActual = 0;
-			}
-			// el puntero quedó en el SIGUIENTE registro -> retrocedo uno
-			fseek(f, -(long)sizeof(Producto), SEEK_CUR);
-			fwrite(&p, sizeof(Producto), 1, f);
-			cout << "	Producto " << p.descripcion << " (" << p.codigo << ") Actualizado."<< endl;
-		}
+	
+	p.stockActual -= cantidad;
+	if (p.stockActual < 0){
+		p.stockActual = 0;
 	}
-	if (!encontrado) cout << "No se encontro el Producto." << endl;
+
+	fseek(f, productoEncontrado * sizeof(Producto), SEEK_SET);
+    fwrite(&p, sizeof(Producto), 1, f);
+			
+	cout << "	Producto " << p.descripcion << " (" << p.codigo << ") Actualizado."<< endl;
+	
+	
 	fclose(f);
  }
 
@@ -326,7 +351,23 @@ void obtenerMozos(const char* nombre, Mozo arr[], int& len) {
 void generarClave(Mozo& mozo) {
     char clave[20];
 
-    sprintf(clave, "%d", mozo.idMozo);
+    int numero = mozo.idMozo;
+    int i = 0;
+
+    do {
+        clave[i] = numero % 10 + '0';
+        numero = numero / 10;
+        i++;
+    } while (numero > 0);
+
+    clave[i] = '\0';
+
+    // Invertir los caracteres para recuperar el orden original.
+    for (int j = 0; j < i / 2; j++) {
+        char aux = clave[j];
+        clave[j] = clave[i - 1 - j];
+        clave[i - 1 - j] = aux;
+    }
 
     for (int i = 0; clave[i] != '\0'; i++) {
         clave[i] = clave[i] + NUM_CORRIMIENTO;
