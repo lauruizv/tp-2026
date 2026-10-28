@@ -1,6 +1,6 @@
 Grupo Numero 6: Laureano Ruiz github: lauruizv. | Mariano Delgado github: Marian4d.
 
-Importante: antes de ejecutar, crear la carpeta datos/ en la raíz del proyecto y colocar ahí los archivos que da la cátedra (comandas_historicas.dat e inventario.dat). Los programas no crean esa carpeta. Todos los archivos que generan (mozos.dat, comandas_dd-mm-aaaa.dat, comandas_semana_sX-mm.dat) también quedan en datos/. Los programas deben ejecutarse desde la carpeta raíz del proyecto para que las rutas relativas a datos/ funcionen.
+Importante: Antes de ejecutar, crear la carpeta datos/ en la raíz del proyecto (los programas no la crean) y colocar ahí los archivos que da la cátedra: comandas_historicas.dat e inventario.dat. Todos los archivos que generan los programas (mozos.dat, comandas_dd-mm-aaaa.dat, comandas_semana_sX-mm.dat) también quedan en datos/. Los programas deben ejecutarse desde la carpeta raíz del proyecto para que las rutas relativas a datos/ funcionen.
 
 ## Cómo compilar y ejecutar
 Ejecutar siempre desde la carpeta raíz del proyecto; los archivos a leer (.dat) van en datos/.
