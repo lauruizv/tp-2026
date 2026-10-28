@@ -5,7 +5,7 @@ Importante: todos los archivos .dat deben ubicarse en la carpeta datos/. Los pro
 1. Normalización: Delgado, Mariano (Marian4d). Procesa los archivos históricos y el inventario para generar los archivos normalizados necesarios para el funcionamiento del sistema. Se ejecuta primero de todo y una única vez.
 
 Partes Clave:
--Generación de claves: se genera una contraseña para cada mozo a partir de su nombre, aplicando un desplazamiento de caracteres.
+-Generación de claves: se genera una contraseña para cada mozo a partir de su 'id_Mozo', aplicando un desplazamiento de caracteres.
 -Cálculo de comisiones: se acumulan las comisiones correspondientes a cada mozo a partir de las comandas históricas.
 -Separación de la información: se utilizan estructuras auxiliares en memoria para conservar temporalmente los datos necesarios, agrupar las comandas por fecha y generar los archivos diarios con la información normalizada.
 
