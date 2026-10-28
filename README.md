@@ -5,11 +5,12 @@ Importante: antes de ejecutar, crear la carpeta datos/ en la raíz del proyecto 
 ## Cómo compilar y ejecutar
 Ejecutar siempre desde la carpeta raíz del proyecto; los archivos a leer (.dat) van en datos/.
 
+```
 g++ normalizacion.cpp -o normalizacion
 g++ ventas.cpp -o ventas
 g++ cierre.cpp -o cierreSS
 g++ resumen.cpp -o resumen
-
+```
 Orden de ejecución:
 1. ./normalizacion   (una sola vez, al principio)
 2. ./ventas          (una vez por cada día que se carga)
