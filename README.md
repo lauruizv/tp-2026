@@ -29,10 +29,10 @@ Partes Clave:
 Partes Clave:
 ​-Autenticación de mozos: se verifica la identidad mediante el ingreso del ID y una clave. A la clave ingresada se le aplica un corrimiento matemático acordado en grupo para validarla en vivo contra el archivo maestro de mozos.
 ​-Gestión dinámica de inventario y ventas: se registran los productos despachados y se actualiza el stock disponible sobreescribiendo directamente el archivo binario, validando en el proceso que exista cantidad suficiente para cubrir la venta.
-​-Ordenamiento directo en disco: se implementa un algoritmo de burbuja operando directamente sobre la memoria física del archivo generado (mediante fseek, fread y fwrite). Esto agrupa las comandas por identificador de mozo sin depender de arreglos estáticos, respetando la consigna de no limitar el uso de memoria RAM.
+​-Ordenamiento directo en disco: se implementa un algoritmo de burbuja operando directamente sobre la memoria física del archivo generado (mediante fseek, fread y fwrite). Esto agrupa las comandas por identificador de mozo sin depender de arreglos estáticos.
 
 
-3. Cierre:  Delgado, Mariano (Marian4d). Permite cerrar la semana siempre que exista la planilla del día ingresado como cierre de semana. Se espera que se ejecute al final de la semana, tras muchas ejecuciones de   ventas.cpp. De todas formas, la reitirada ejecucion de cierre (caso anormal), Actualiza el archivo semanal sin dejar ducplicados.
+3. Cierre:  Delgado, Mariano (Marian4d). Permite cerrar la semana siempre que exista la planilla del día ingresado como cierre de semana. Se espera que se ejecute al final de la semana, tras muchas ejecuciones de   ventas.cpp. De todas formas, la reiterada ejecucion de cierre (caso anormal), Actualiza el archivo semanal sin dejar duplicados.
 
 Partes Clave:
 -Validación de la fecha: se comprueba que la fecha ingresada corresponda a un cierre permitido, se comprueba que exista el archivo de comandas correspondiente a la fecha ingresada. Si no existe, no se genera el cierre.
