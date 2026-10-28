@@ -8,7 +8,7 @@ Ejecutar siempre desde la carpeta raíz del proyecto; los archivos a leer (.dat)
 ```
 g++ normalizacion.cpp -o normalizacion
 g++ ventas.cpp -o ventas
-g++ cierre.cpp -o cierreSS
+g++ cierre.cpp -o cierre
 g++ resumen.cpp -o resumen
 ```
 Orden de ejecución:
