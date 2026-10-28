@@ -2,6 +2,20 @@ Grupo Numero 6: Laureano Ruiz github: lauruizv. | Mariano Delgado github: Marian
 
 Importante: todos los archivos .dat deben ubicarse en la carpeta datos/. Los programas deben ejecutarse desde la carpeta raíz del proyecto para que las rutas relativas a esos archivos funcionen correctamente.
 
+## Cómo compilar y ejecutar
+Ejecutar siempre desde la carpeta raíz del proyecto; los .dat van en datos/.
+
+g++ normalizacion.cpp -o normalizacion
+g++ ventas.cpp -o ventas
+g++ cierre.cpp -o cierreSS
+g++ resumen.cpp -o resumen
+
+Orden de ejecución:
+1. ./normalizacion   (una sola vez, al principio)
+2. ./ventas          (una vez por cada día que se carga)
+3. ./cierre          (al final de la semana)
+4. ./resumen         (cuando se quiera consultar una semana cerrada)
+   
 1. Normalización: Delgado, Mariano (Marian4d). Procesa los archivos históricos y el inventario para generar los archivos normalizados necesarios para el funcionamiento del sistema. Se ejecuta primero de todo y una única vez.
 
 Partes Clave:
