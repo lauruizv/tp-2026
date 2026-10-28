@@ -1,9 +1,9 @@
 Grupo Numero 6: Laureano Ruiz github: lauruizv. | Mariano Delgado github: Marian4d.
 
-Importante: todos los archivos .dat deben ubicarse en la carpeta datos/. Los programas deben ejecutarse desde la carpeta raíz del proyecto para que las rutas relativas a esos archivos funcionen correctamente.
+Importante: antes de ejecutar, crear la carpeta datos/ en la raíz del proyecto y colocar ahí los archivos que da la cátedra (comandas_historicas.dat e inventario.dat). Los programas no crean esa carpeta. Todos los archivos que generan (mozos.dat, comandas_dd-mm-aaaa.dat, comandas_semana_sX-mm.dat) también quedan en datos/. Los programas deben ejecutarse desde la carpeta raíz del proyecto para que las rutas relativas a datos/ funcionen.
 
 ## Cómo compilar y ejecutar
-Ejecutar siempre desde la carpeta raíz del proyecto; los .dat van en datos/.
+Ejecutar siempre desde la carpeta raíz del proyecto; los archivos a leer (.dat) van en datos/.
 
 g++ normalizacion.cpp -o normalizacion
 g++ ventas.cpp -o ventas
